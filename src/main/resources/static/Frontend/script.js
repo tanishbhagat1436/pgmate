@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const API_BASE_URL = window.location.origin;
+    const API_BASE_URL = window.location.origin + '/api';
 
     const loggedInUserId = sessionStorage.getItem('pgUserId');
     const loggedInUserName = sessionStorage.getItem('pgUserName');
