@@ -8,6 +8,7 @@
 </head>
 <body class="auth-page">
     <div class="auth-container">
+        <!-- Tenant Signup Card -->
         <div class="auth-card" id="tenant-signup">
             <div class="auth-image-section" style="background-image: url('images/login-bg-tenant.jpg');">
                 <div class="overlay-content">
@@ -19,7 +20,7 @@
                 <a href="index.html" class="home-link">← Back to Home</a>
                 <h3>Create Tenant Account</h3>
                 <form id="signup-form-tenant">
-                    <div id="error-tenant" class="error-message"></div>
+                    <div id="error-tenant" class="error-message" style="display: none; color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px;"></div>
                     <div class="form-group">
                         <label for="tenant-signup-name">Full Name</label>
                         <input type="text" id="tenant-signup-name" name="fullname" placeholder="John Doe" required>
@@ -39,9 +40,11 @@
                     <button type="submit" class="btn btn-cta">Create Account</button>
                 </form>
                 <p class="auth-switch">Already have an account? <a href="login.html">Log In</a></p>
-                <p class="auth-switch">Signing up as an Owner? <a href="#" onclick="switchSignup('owner')">Click Here</a></p>
+                <p class="auth-switch">Signing up as an Owner? <a href="javascript:void(0)" onclick="switchSignup('owner')">Click Here</a></p>
             </div>
         </div>
+
+        <!-- Owner Signup Card -->
         <div class="auth-card" id="owner-signup" style="display: none;">
             <div class="auth-image-section" style="background-image: url('images/login-bg-owner.jpg');">
                 <div class="overlay-content">
@@ -53,7 +56,7 @@
                 <a href="index.html" class="home-link">← Back to Home</a>
                 <h3>Create Owner Account</h3>
                 <form id="signup-form-owner">
-                    <div id="error-owner" class="error-message"></div>
+                    <div id="error-owner" class="error-message" style="display: none; color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px;"></div>
                     <div class="form-group">
                         <label for="owner-signup-name">Full Name</label>
                         <input type="text" id="owner-signup-name" name="fullname" placeholder="Jane Smith" required>
@@ -73,10 +76,112 @@
                     <button type="submit" class="btn btn-cta">Create Account</button>
                 </form>
                 <p class="auth-switch">Already have an account? <a href="login.html">Log In</a></p>
-                <p class="auth-switch">Signing up as a Tenant? <a href="#" onclick="switchSignup('tenant')">Click Here</a></p>
+                <p class="auth-switch">Signing up as a Tenant? <a href="javascript:void(0)" onclick="switchSignup('tenant')">Click Here</a></p>
             </div>
         </div>
     </div>
+
     <script src="script.js"></script>
+    <script>
+        function switchSignup(type) {
+            const tenantCard = document.getElementById('tenant-signup');
+            const ownerCard = document.getElementById('owner-signup');
+            if (type === 'owner') {
+                tenantCard.style.display = 'none';
+                ownerCard.style.display = 'flex';
+            } else {
+                ownerCard.style.display = 'none';
+                tenantCard.style.display = 'flex';
+            }
+        }
+
+        // Tenant form submit handler
+        document.getElementById('signup-form-tenant')?.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const errorDiv = document.getElementById('error-tenant');
+            errorDiv.style.display = 'none';
+
+            const name = document.getElementById('tenant-signup-name').value.trim();
+            const email = document.getElementById('tenant-signup-email').value.trim();
+            const password = document.getElementById('password-tenant').value;
+            const confirmPassword = document.getElementById('confirm-password-tenant').value;
+
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'Passwords do not match.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/users/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        password: password,
+                        role: 'TENANT'
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Tenant Account Created Successfully! Please login.');
+                    window.location.href = 'login.html';
+                } else {
+                    const errorMsg = await response.text();
+                    errorDiv.textContent = errorMsg || 'Registration failed. Please try again.';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+                errorDiv.textContent = 'Could not connect to the server.';
+                errorDiv.style.display = 'block';
+            }
+        });
+
+        // Owner form submit handler
+        document.getElementById('signup-form-owner')?.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const errorDiv = document.getElementById('error-owner');
+            errorDiv.style.display = 'none';
+
+            const name = document.getElementById('owner-signup-name').value.trim();
+            const email = document.getElementById('owner-signup-email').value.trim();
+            const password = document.getElementById('password-owner').value;
+            const confirmPassword = document.getElementById('confirm-password-owner').value;
+
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'Passwords do not match.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/users/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        password: password,
+                        role: 'OWNER'
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Owner Account Created Successfully! Please login.');
+                    window.location.href = 'login.html';
+                } else {
+                    const errorMsg = await response.text();
+                    errorDiv.textContent = errorMsg || 'Registration failed. Please try again.';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+                errorDiv.textContent = 'Could not connect to the server.';
+                errorDiv.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>
