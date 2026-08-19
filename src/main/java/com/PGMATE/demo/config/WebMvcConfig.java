@@ -10,14 +10,18 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        // Redirects root "/" directly to your Frontend folder's index.html
+        // Redirects base domain root "/" directly to your Frontend index page
         registry.addRedirectViewController("/", "/Frontend/index.html");
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Maps all static paths including Frontend subfolder
+        // Maps all static resources, stylesheets, JS, and image directories
         registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/static/", "classpath:/static/Frontend/");
+                .addResourceLocations(
+                    "classpath:/static/",
+                    "classpath:/static/Frontend/",
+                    "classpath:/static/Frontend/images/"
+                );
     }
 }
